@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>NFA Visualizer</title>
+    <meta name="description" content="This tool is used to create and visualize non-deterministic finite automata (NFA) through an interactive and visual interface.">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="src/img/favicon.png" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+
+    <!-- Import fonts from Google Fonts, such as Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+
+    <!-- Material Icons provides in-line action icons, such as those in the right-click edit menu in the canvas -->
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="src/css/mdi.css">
+
+    <!-- Bulma provides a lightweight CSS3 library, including Flexbox grid layouts and button styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+
+    <link rel="stylesheet" href="src/css/main.css">
+</head>
+
+<body>
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" style="display: none;">
+        <div class="navbar-brand" style="padding-left: 15px;">
+            <a class="navbar-item" href="https://joeylemon.github.io/nfa-to-dfa">
+                <img src="src/img/logo.png" width="100" height="28">
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="https://github.com/joeylemon/nfa-to-dfa/blob/master/README.md">
+                    About
+                </a>
+            </div>
+
+            <div class="navbar-end">
+            </div>
+        </div>
+    </nav>
+
+    <div class="notification is-danger" id="warning" style="display: none;">
+        <button class="delete"></button>
+        <span class="notification-body"></span>
+    </div>
+
+    <div class="modal help-modal" id="nfa-help-modal">
+        <div class="modal-background modal-close-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">How to Build the NFA</p>
+                <button class="delete modal-close-button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>Start building the NFA by <nobr>right-clicking
+                        <i class="mdi mdi-mouse" aria-hidden="true"></i>
+                    </nobr>
+                    on the canvas to create a node. Then, <nobr>right-click
+                        <i class="mdi mdi-mouse" aria-hidden="true"></i>
+                    </nobr>
+                    on the new node to create a transition, edit its properties, or delete
+                    it.
+                    You can <nobr>
+                        pan
+                        <i class="mdi mdi-cursor-pointer" aria-hidden="true"></i>
+                    </nobr>
+                    the canvas by clicking and dragging the mouse. You can <nobr>zoom
+                        <i class="mdi mdi-magnify-plus" aria-hidden="true"></i>
+                    </nobr>
+                    the canvas by hovering the mouse over the canvas and scrolling up or down. Additionally, you can
+                    import a saved NFA or use one from a list of presets.</p>
+                <p>When creating a transition between nodes, you will be prompted to press a key on your keyboard to
+                    represent the transition symbol. You can use any key, including uppercase values. However, to create
+                    an epsilon (ε) transition, you must press the <img src="src/img/e_key.png" style="height: 15px;"
+                        alt="E" /> key on your keyboard.</p>
+                <video id="nfa-help-video" loop muted playsinline>
+                    <source src="src/img/nfa-help.mp4" type="video/mp4" />
+                    <source src="src/img/nfa-help.webm" type="video/webm" />
+                </video>
+                <p class="subtitle">A video demonstration of the NFA creation process.</p>
+            </section>
+        </div>
+    </div>
+
+    <div class="columns is-desktop">
+        <div class="column is-7">
+            <div class="card title" id="nfa-title" style="display: none;">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column">
+                            <h1>
+                                Non-deterministic
+                                Finite Automaton
+                                (NFA)
+                            </h1>
+                        </div>
+                        <div class="column is-1">
+                            <button class="button orange-button" id="nfa-help-button" aria-haspopup="true"
+                                style="width:100%;" title="View instructions on how to use the NFA builder">
+                                <i class="mdi mdi-36px mdi-help-circle-outline title-help-icon" aria-hidden="true"
+                                    style="color: #fff;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box" style="display: none;">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button blue-button" id="nfa-convert" style="width:100%;"
+                            title="Convert the NFA to a DFA" disabled>
+                            Convert to DFA
+                        </button>
+                    </div>
+
+                    <div class="column">
+                        <div class="dropdown" id="preset-dropdown" style="width:100%;">
+                            <div class="dropdown-trigger" style="width:100%;">
+                                <button class="button orange-button" aria-haspopup="true" aria-controls="dropdown-menu"
+                                    style="width:100%;" title="Use a predefined example NFA">
+                                    <i class="mdi mdi-format-list-bulleted" aria-hidden="true"></i>Presets
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" role="menu" style="width:100%;">
+                                <div class="dropdown-content">
+                                    <a class="dropdown-item" id="preset-1">
+                                        <i class="mdi mdi-18px mdi-graph" aria-hidden="true"></i> Preset #1
+                                    </a>
+                                    <a class="dropdown-item" id="preset-2">
+                                        <i class="mdi mdi-18px mdi-graph" aria-hidden="true"></i> Preset #2
+                                    </a>
+                                    <a class="dropdown-item" id="preset-3">
+                                        <i class="mdi mdi-18px mdi-graph" aria-hidden="true"></i> Preset #3
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-1">
+                        <button class="button orange-button" id="nfa-reset" style="width:100%;"
+                            title="Reset the canvas and start from scratch" disabled>
+                            <i class="mdi mdi-replay" aria-hidden="true" style="margin-right: -5px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="nfa-container" class="box" style="padding:0px; position: relative;">
+                <canvas id="nfa"></canvas>
+            </div>
+        </div>
+        <div class="column is-5">
+            <div class="box block" id="nfa-test-string">
+                <div style="display: flex; align-items: center; margin-bottom: 0;">
+                    <div style="flex-grow: 1; margin-right: 15px;">
+                        <input class="input" type="text" id="nfa-test-input" placeholder="Test a string based on symbols...">
+                    </div>
+                    <div>
+                        <button class="button" id="nfa-test-result" disabled style="width: 150px;">
+                            Waiting...
+                        </button>
+                    </div>
+                </div>
+                <div id="nfa-test-trace" style="margin-top: 15px; display: none;"></div>
+            </div>
+            <div class="card block" id="nfa-delta-transitions">
+                <header class="card-header">
+                    <p class="card-header-title fsa-description">
+                        N = (<em>Q, E, 𝛿, q<sub>0</sub>, F</em> )
+                    </p>
+                </header>
+                <div class="card-content">
+                    <div class="fsa-description">
+                        <div class="columns" style="margin-bottom: 0px;">
+                            <div class="column">
+                                <em>Q</em> = <span class="states"></span>
+                            </div>
+                            <div class="column">
+                                <em>E</em> = <span class="alphabet"></span>
+                            </div>
+                            <div class="column">
+                                <em>q<sub>0</sub></em> = <span class="startState"></span>
+                            </div>
+                            <div class="column">
+                                <em>F</em> = <span class="acceptStates"></span>
+                            </div>
+                        </div>
+                        <div>
+                            𝛿 =
+                        </div>
+                    </div>
+                    <table class="table is-bordered is-striped is-fullwidth"></table>
+                </div>
+            </div>
+        </div>
+        <div class="column" id="dfa-column" style="display: none;">
+            <div class="card title" id="dfa-title">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column">
+                            <h1>
+                                Deterministic
+                                Finite Automaton
+                                (DFA)
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button blue-button" id="dfa-play" style="width:100%;" title="Play or pause the conversion process">
+                            <i class="mdi mdi-play" aria-hidden="true" id="dfa-play-icon"></i><span id="dfa-play-text">Play</span>
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button blue-button" id="dfa-step-backward" style="width:100%;" title="Step backward in the conversion process">
+                            <i class="mdi mdi-skip-previous" aria-hidden="true"></i>Step Backward
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button blue-button" id="dfa-step-forward" style="width:100%;" title="Step forward in the conversion process">
+                            <i class="mdi mdi-skip-next" aria-hidden="true"></i>Step Forward
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button blue-button" id="dfa-complete" style="width:100%;" title="Instantly complete the conversion process">
+                            <i class="mdi mdi-fast-forward" aria-hidden="true"></i>Complete
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="dfa-container" class="box" style="padding:0px; position: relative;">
+                <canvas id="dfa"></canvas>
+                <div class="dfa-conversion-step" id="dfa-conversion-step"></div>
+            </div>
+            <div class="card block" id="dfa-delta-transitions">
+                <header class="card-header">
+                    <p class="card-header-title fsa-description">
+                        M = (<em>Q, E, 𝛿, q<sub>0</sub>, F</em> )
+                    </p>
+                </header>
+                <div class="card-content">
+                    <div class="fsa-description">
+                        <div class="columns" style="margin-bottom: 0px;">
+                            <div class="column">
+                                <em>Q</em> = <span class="states"></span>
+                            </div>
+                            <div class="column">
+                                <em>E</em> = <span class="alphabet"></span>
+                            </div>
+                            <div class="column">
+                                <em>q<sub>0</sub></em> = <span class="startState"></span>
+                            </div>
+                            <div class="column">
+                                <em>F</em> = <span class="acceptStates"></span>
+                            </div>
+                        </div>
+                        <div>
+                            𝛿 =
+                        </div>
+                    </div>
+                    <table class="table is-bordered is-striped is-fullwidth"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/js/index.js" type="module"></script>
+</body>
+
+</html>
