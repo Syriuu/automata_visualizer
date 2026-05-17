@@ -114,13 +114,6 @@
             <div class="box" style="display: none;">
                 <div class="columns">
                     <div class="column">
-                        <button class="button blue-button" id="nfa-convert" style="width:100%;"
-                            title="Convert the NFA to a DFA" disabled>
-                            Convert to DFA
-                        </button>
-                    </div>
-
-                    <div class="column">
                         <div class="dropdown" id="preset-dropdown" style="width:100%;">
                             <div class="dropdown-trigger" style="width:100%;">
                                 <button class="button orange-button" aria-haspopup="true" aria-controls="dropdown-menu"
@@ -200,83 +193,7 @@
                 </div>
             </div>
         </div>
-        <div class="column" id="dfa-column" style="display: none;">
-            <div class="card title" id="dfa-title">
-                <div class="card-content">
-                    <div class="columns">
-                        <div class="column">
-                            <h1>
-                                Deterministic
-                                Finite Automaton
-                                (DFA)
-                            </h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="box">
-                <div class="columns">
-                    <div class="column">
-                        <button class="button blue-button" id="dfa-play" style="width:100%;"
-                            title="Play or pause the conversion process">
-                            <i class="mdi mdi-play" aria-hidden="true" id="dfa-play-icon"></i><span
-                                id="dfa-play-text">Play</span>
-                        </button>
-                    </div>
-                    <div class="column">
-                        <button class="button blue-button" id="dfa-step-backward" style="width:100%;"
-                            title="Step backward in the conversion process">
-                            <i class="mdi mdi-skip-previous" aria-hidden="true"></i>Step Backward
-                        </button>
-                    </div>
-                    <div class="column">
-                        <button class="button blue-button" id="dfa-step-forward" style="width:100%;"
-                            title="Step forward in the conversion process">
-                            <i class="mdi mdi-skip-next" aria-hidden="true"></i>Step Forward
-                        </button>
-                    </div>
-                    <div class="column">
-                        <button class="button blue-button" id="dfa-complete" style="width:100%;"
-                            title="Instantly complete the conversion process">
-                            <i class="mdi mdi-fast-forward" aria-hidden="true"></i>Complete
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div id="dfa-container" class="box" style="padding:0px; position: relative;">
-                <canvas id="dfa"></canvas>
-                <div class="dfa-conversion-step" id="dfa-conversion-step"></div>
-            </div>
-            <div class="card block" id="dfa-delta-transitions">
-                <header class="card-header">
-                    <p class="card-header-title fsa-description">
-                        M = (<em>Q, E, 𝛿, q<sub>0</sub>, F</em> )
-                    </p>
-                </header>
-                <div class="card-content">
-                    <div class="fsa-description">
-                        <div class="columns" style="margin-bottom: 0px;">
-                            <div class="column">
-                                <em>Q</em> = <span class="states"></span>
-                            </div>
-                            <div class="column">
-                                <em>E</em> = <span class="alphabet"></span>
-                            </div>
-                            <div class="column">
-                                <em>q<sub>0</sub></em> = <span class="startState"></span>
-                            </div>
-                            <div class="column">
-                                <em>F</em> = <span class="acceptStates"></span>
-                            </div>
-                        </div>
-                        <div>
-                            𝛿 =
-                        </div>
-                    </div>
-                    <table class="table is-bordered is-striped is-fullwidth"></table>
-                </div>
-            </div>
-        </div>
+
     </div>
 
     <script src="src/js/index.js" type="module"></script>
